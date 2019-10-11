@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import MovieCard from "./MovieCard";
+import { Button } from "semantic-ui-react";
 export default class Movie extends React.Component {
   constructor(props) {
     super(props);
@@ -35,6 +36,13 @@ export default class Movie extends React.Component {
     this.props.history.push(`/update-movie/${this.state.movie.id}`);
   }
 
+  deleteMovie = id => {
+    axios
+      .delete(`http://localhost:5000/api/movies/${id}`)
+      .then(() => this.props.history.push('/'))
+      .catch(err => console.log(err.response));
+  }
+
   render() {
     if (!this.state.movie) {
       return <div>Loading movie information...</div>;
@@ -43,11 +51,18 @@ export default class Movie extends React.Component {
     return (
       <div className="save-wrapper">
         <MovieCard movie={this.state.movie} />
-        <div className="save-button" onClick={this.saveMovie}>
-          Save
-        </div>
-        <div className="update-button" onClick={this.updateMovie}>
-          Update
+        <div>
+          <Button.Group>
+            <Button onClick={this.saveMovie} positive>
+              Save
+            </Button>
+            <Button.Or />
+            <Button onClick={this.updateMovie} color="yellow">
+              Update
+            </Button>
+            <Button.Or />
+            <Button onClick={() => this.deleteMovie(this.state.movie.id)} negative>Delete</Button>
+          </Button.Group>
         </div>
       </div>
     );
