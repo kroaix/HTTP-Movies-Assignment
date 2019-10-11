@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import 'semantic-ui-css/semantic.min.css';
+import { Form, Input, Button, Icon } from 'semantic-ui-react';
 
 const initialState = {
   title: '',
@@ -39,10 +41,96 @@ const UpdateMovie = props => {
       .catch(err => console.log(err))
   }
 
-  return(
-    <div>
+  const handleDelete = id => {
+    setState({
+      ...state,
+      stars: state.stars.filter(star => star !== id)
+    });
+  }
+
+  const handleAdd = () => {
+    setState({
+      ...state,
+      stars: [...state.stars, '']
+    })
+  }
+
+  const handleChanges = i => e => {
+    setState({
+      ...state,
+      stars: state.stars.map((star, id) => {
+        return id === i ? e.target.value : star;
+      })
+    })
+  }
+
+  return (
+    <div className="save-wrapper">
+      <div className="movie-card">
+        <Form onSubmit={handleSubmit}>
+          <Form.Field>
+            <label>Title</label>
+            <Input
+              type="text"
+              name="title"
+              value={state.title}
+              onChange={handleChange}
+              placeholder="Title"
+              required
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Director</label>
+            <Input
+              type="text"
+              name="director"
+              value={state.director}
+              onChange={handleChange}
+              placeholder="Director"
+              required
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Metascore</label>
+            <Input
+              type="number"
+              min="0"
+              max="100"
+              name="metascore"
+              value={state.metascore}
+              onChange={handleChange}
+              placeholder="Metascore"
+              required
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Actors</label>
+            {state.stars.map((star, id) => (
+              <div key={id}>
+                <Input
+                  type="text"
+                  name="stars"
+                  key={id}
+                  value={star}
+                  onChange={handleChanges(id)}
+                  placeholder="Stars"
+                  required
+                />
+                <Button onClick={() => handleDelete(star)} color="red">
+                  <Icon name="trash" />
+                </Button>
+              </div>
+            ))}
+            <Button onClick={handleAdd} positive>
+              <Icon name="plus" />
+              Add Actor
+            </Button>
+          </Form.Field>
+          <Button color="yellow">Update</Button>
+        </Form>
+      </div>
     </div>
-  )
+  );
 }
 
 export default UpdateMovie;
